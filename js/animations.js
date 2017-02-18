@@ -1,8 +1,13 @@
+//selector variables//
 var tCompose = $('#tweet-compose-main')
 var tCharCount = $('#char-count')
 var tSubmit = $('#tweet-submit')
-var tFeedNew = $('.tweet:first')
-var tBtnTweet = $('#tweet-submit')
+var tFeed= $('#stream')
+var tActions = $('.tweet-actions')
+var tStats = '.stats'
+var tReply = '.reply'
+//function variables//
+var tFunc = tweetFlex();
 
 tSubmit.prop('disabled',true)
 tSubmit.css({"background":"#1b95e0","opacity":".2"})
@@ -24,8 +29,13 @@ function countCompose(){
   var len = 140-this.value.length
   console.log(this.value.length)
 
-
-  if (len<=10 && len>=0){
+  if(len === 140){
+    tCharCount.css("color",""),
+    tCompose.css("background","")
+    tSubmit.prop('disabled',true)
+    tSubmit.css({"background":"#1b95e0","opacity":".2"})
+  }
+  else if (len<=10 && len>=0){
     tCharCount.css("color","red"),
     tCompose.css("background","#fcc")
   }
@@ -40,20 +50,96 @@ function countCompose(){
     tSubmit.css({"background":"","opacity":""})
   }
     //To select only overwritten text, possibly cut it into two arrays/two spans or append <em></em> and add style to <em
-    if(this.value.length === 0){
-      tSubmit.prop('disabled',true)
-      tSubmit.css({"background":"#1b95e0","opacity":".2"})
-    }
+
   tCharCount.text(len)
 }
 function tweet(){
+  var tMessage = tCompose.val();
+  localStorage.setItem('dateOfTweet',Date())
+  var tTime = moment().format('h:mm a - DD MMM YY')
+  // .fromNow();
   tCompose.val('')
   tCharCount.text('140')
   tCompose.blur()
   tSubmit.prop('disabled',true)
   tSubmit.css({"background":"#1b95e0","opacity":".2"})
-  tFeedNew.prepend('<div class="tweet"><div class="content"><img class="avatar" src="img/damenleeturks.jpg" /><strong class="fullname">My BFF</strong><span class="username">@mybff</span><p class="tweet-text">Today is an amazing day.</p><div class="tweet-actions"><ul><li><span class="icon action-reply"></span> Reply</li><li><span class="icon action-retweet"></span> Retweet</li><li><span class="icon action-favorite"></span> Favorite</li><li><span class="icon action-more"></span> More</li></ul></div><div class="stats">0</p><p>RETWEETS</p></div><div class="favorites"><p class="num-favorites">0</p><p>FAVORITES</p></div><div class="users-interact"><div><img src="img/alagoon.jpg" /><img src="img/vklimenko.jpg" /></div></div><div class="time">1:04 PM - 19 Sep 13</div></div><div class="reply"><img class="avatar" src="img/alagoon.jpg" /><textarea class="tweet-compose" placeholder="Reply to @mybff"/></textarea></div></div></div>')
+
+  tFeed.prepend(`<div class="tweet">
+    <div class="content">
+      <img class="avatar" src="img/alagoon.jpg" />
+      <strong class="fullname">Benito</strong>
+      <span class="username">@buanito</span>
+      <p class="tweet-text">${tMessage}</p>
+        <div class="tweet-actions">
+          <ul>
+            <li><span class="icon action-reply"></span> Reply</li>
+            <li><span class="icon action-retweet"></span> Retweet</li>
+            <li><span class="icon action-favorite"></span> Favorite</li>
+            <li><span class="icon action-more"></span> More</li>
+          </ul>
+        </div>
+        <div class="stats">
+          <div class="retweets">
+            <p class="num-retweets">0</p>
+            <p>RETWEETS</p>
+          </div>
+          <div class="favorites">
+            <p class="num-favorites">0</p>
+            <p>FAVORITES</p>
+          </div>
+          <div class="users-interact">
+            <div>
+            </div>
+          </div>
+          <div class="time">${tTime}</div>
+        </div>
+      <div class="reply">
+        <img class="avatar" src="img/alagoon.jpg" />
+        <textarea class="tweet-compose" placeholder="Reply to @mybff"/></textarea>
+      </div></div></div>`)
 }
+function tweetFlex(){
+  return {
+
+    mo: function(){
+      $(this).find(tActions).show()
+    },
+    ml: function(){
+      $(this).find(tActions).hide()
+    },
+    cl: function(){
+      // console.log($(this).children().children())
+      $(this).find(tReply).slideToggle()
+      $(this).find(tStats).slideToggle()
+    }
+}}
+
+function relative_time() {
+
+  var dater = localStorage.getItem('dateOfTweet')
+  dater = (new Date(dater))
+  var min = dater.getMinutes()
+  var hours = dater.getHours()
+
+  var min2 = new Date().getMinutes()
+  var hours2 = new Date().getHours()
+
+  var totalMin = min+(hours*60)
+  var totalMin2 = min2+(hours2*60)
+
+  var delta = totalMin2 - totalMin
+
+
+      if (delta < 1) {
+        return 'a few seconds ago';
+      } else if(delta <60) {
+        return delta+"m ago"
+      } else if(delta >60 && delta<120) {
+        return '1h'
+      } else {
+        return dater;
+      }
+  }
 
 
 
@@ -65,7 +151,10 @@ $(document).ready( function(){
   tCompose.keyup(countCompose)
   tCompose.keydown(countCompose)
 // Add Tweet to Feed
-  tBtnTweet.click(tweet)
+  tSubmit.click(tweet)
+  tFeed.on({mouseover: tFunc.mo,mouseleave:tFunc.ml,click:tFunc.cl},'.tweet')
+
+
 
 
 
