@@ -3,7 +3,8 @@ var tCompose = $('#tweet-compose-main')
 var tCharCount = $('#char-count')
 var tSubmit = $('#tweet-submit')
 var tFeed= $('#stream')
-var tActions = $('.tweet-actions')
+//class variables
+var tActions = '.tweet-actions'
 var tStats = '.stats'
 var tReply = '.reply'
 //function variables//
@@ -15,15 +16,12 @@ tSubmit.css({"background":"#1b95e0","opacity":".2"})
 function startCompose(){
   $('#tweet-controls').show()
   tCompose.css('height','5rem')
-  // tCompose.height(tCompose.height()*2.5)
 }
 function exitCompose(){
   if(this.value.length===0){
     $('#tweet-controls').hide()
     tCompose.css("height","")
-  }
-
-
+}
 }
 function countCompose(){
   var len = 140-this.value.length
@@ -54,10 +52,12 @@ function countCompose(){
   tCharCount.text(len)
 }
 function tweet(){
+  //Save message as variable
   var tMessage = tCompose.val();
+  //Manage time of stweet
   localStorage.setItem('dateOfTweet',Date())
   var tTime = moment().format('h:mm a - DD MMM YY')
-  // .fromNow();
+  //Reset tweet box
   tCompose.val('')
   tCharCount.text('140')
   tCompose.blur()
@@ -100,8 +100,8 @@ function tweet(){
 }
 function tweetFlex(){
   return {
-
     mo: function(){
+      console.log(this)
       $(this).find(tActions).show()
     },
     ml: function(){
@@ -152,7 +152,7 @@ $(document).ready( function(){
   tCompose.keydown(countCompose)
 // Add Tweet to Feed
   tSubmit.click(tweet)
-  tFeed.on({mouseover: tFunc.mo,mouseleave:tFunc.ml,click:tFunc.cl},'.tweet')
+  tFeed.on({mouseover: tFunc.mo,mouseleave:tFunc.ml,click:tFunc.cl},'.content')
 
 
 
