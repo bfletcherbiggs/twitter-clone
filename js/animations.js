@@ -36,6 +36,8 @@ function countCompose(){
   else if (len<=10 && len>=0){
     tCharCount.css("color","red"),
     tCompose.css("background","#fcc")
+    tSubmit.prop('disabled',false)
+    tSubmit.css({"background":"","opacity":""})
   }
   else if (len<0){
     tSubmit.prop('disabled',true)
@@ -63,6 +65,8 @@ function tweet(){
   tCompose.blur()
   tSubmit.prop('disabled',true)
   tSubmit.css({"background":"#1b95e0","opacity":".2"})
+  tCharCount.css("color","")
+  tCompose.css("background","")
 
   tFeed.prepend(`<div class="tweet">
     <div class="content">
